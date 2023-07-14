@@ -33,7 +33,7 @@ minetest.register_globalstep(function(dtime)
                 player:set_wielded_item(itemstack)
 
                 local velocity = player:get_velocity()
-                player:set_physics_override({gravity=0})
+                player:set_physics_override({gravity=0.01})
                 velocity.y = 0
                 player:set_velocity(velocity)
             else
