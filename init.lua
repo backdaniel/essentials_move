@@ -6,6 +6,10 @@ local S = minetest.get_translator("essentials_move")
 
 -- UMBRELLA
 
+local UMBRELLA_MOVE_SPEED = 2
+local UMBRELLA_FALL_SPEED = -2.3
+local UMBRELLA_WEAR_VALUE = 30
+
 local function can_glide(user)
     local pos = user:get_pos()
     pos.y = pos.y - 0.1
@@ -23,14 +27,13 @@ minetest.register_globalstep(function(dtime)
         if player:get_wielded_item():get_name() == "essentials_move:umbrella" then
             if can_glide(player) then
                 local itemstack = player:get_wielded_item()
-                itemstack:add_wear(30)
+                itemstack:add_wear(UMBRELLA_WEAR_VALUE)
                 player:set_wielded_item(itemstack)
 
-                player:set_physics_override({gravity=0, speed=2})
+                player:set_physics_override({gravity=0, speed=UMBRELLA_MOVE_SPEED})
 
                 local velocity = player:get_velocity()
-                local goal = -2.3
-                local difference = goal - velocity.y
+                local difference = UMBRELLA_FALL_SPEED - velocity.y
                 local scaled = 2 / (1 + math.exp(-difference)) - 1
                 player:add_velocity({x=0, y=scaled, z=0})
             else
@@ -59,7 +62,33 @@ minetest.register_craft({
 
 -- RECALL
 
+minetest.override_item("default:mese_crystal", {
+    on_use = function(itemstack, user, pointed_thing)
+        local pos = user:get_pos()
+        pos.x = math.floor(pos.x + 0.5)
+        pos.z = math.floor(pos.z + 0.5)
 
+        local pos1 = {x = pos.x, y = -31000, z = pos.z}
+        local pos2 = {x = pos.x, y = 31000, z = pos.z}
+
+        local vm = minetest.get_voxel_manip()
+        local emin, emax = vm:read_from_map(pos1, pos2)
+
+        local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
+        local data = vm:get_data()
+
+        for y = 31000, -31000, -1 do
+            local vi = area:index(pos.x, y, pos.z)
+            local nodename = minetest.get_name_from_content_id(data[vi])
+
+            if nodename ~= "air" then
+                pos.y = y + 1
+                user:set_pos(pos)
+                break
+            end
+        end
+    end
+})
 
 -- TELEPORT
 
