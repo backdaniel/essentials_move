@@ -23,22 +23,15 @@ minetest.register_globalstep(function(dtime)
         if player:get_wielded_item():get_name() == "essentials_move:umbrella" then
             if can_glide(player) then
                 local itemstack = player:get_wielded_item()
-
-                itemstack:add_wear(100)
-
+                itemstack:add_wear(30)
                 player:set_wielded_item(itemstack)
 
                 local velocity = player:get_velocity()
 
-                minetest.chat_send_all("x=" .. velocity.x .. ", y=" .. velocity.y .. ", z=" .. velocity.z)
-
-
                 player:set_physics_override({gravity=0})
 
-                local goal = -2
+                local goal = -2.2
                 local difference = goal - velocity.y
-                
-                -- Sigmoid scaling
                 local scaled = 2 / (1 + math.exp(-difference)) - 1
                 
                 player:add_velocity({x=0, y=scaled, z=0})
