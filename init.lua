@@ -81,10 +81,8 @@ minetest.override_item("default:mese_crystal", {
             spawn = minetest.setting_get_pos("static_spawnpoint")
         end
 
-        local min_distance = 10
-
         if spawn then
-            if vector.distance(current_pos, spawn) >= min_distance then
+            if vector.distance(current_pos, spawn) >= MIN_DISTANCE then
                 user:set_pos(spawn)
                 minetest.chat_send_all(name .. " used Mese Crystal to recall.")
                 if not is_creative(name) then
