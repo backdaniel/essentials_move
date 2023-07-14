@@ -62,6 +62,8 @@ minetest.register_craft({
 
 -- RECALL
 
+local MIN_DISTANCE = 10
+
 local function is_creative(player_name)
   local player_privs = minetest.get_player_privs(player_name)
   return player_privs.creative or minetest.is_creative_enabled(player_name)
@@ -71,6 +73,7 @@ minetest.override_item("default:mese_crystal", {
     on_use = function(itemstack, user, pointed_thing)
         local name = user:get_player_name()
         local spawn
+        local current_pos = user:get_pos()
 
         if beds and beds.spawn and beds.spawn[name] then
             spawn = beds.spawn[name]
@@ -79,9 +82,17 @@ minetest.override_item("default:mese_crystal", {
         end
 
         if spawn then
-            user:set_pos(spawn)
-            minetest.chat_send_all(name .. " used Mese Crystal to recall.")
-            return minetest.item_eat(-6)(itemstack, user, pointed_thing)
+            if vector.distance(current_pos, spawn) >= MIN_DISTANCE then
+                user:set_pos(spawn)
+                minetest.chat_send_all(name .. " used Mese Crystal to recall.")
+                if not is_creative(name) then
+                    itemstack:take_item()
+                end
+                return itemstack
+            else
+                minetest.chat_send_player(name, "You are too close to the spawn point!")
+                return itemstack
+            end
         else
             minetest.chat_send_player(name, "No available spawn point!")
             return itemstack
