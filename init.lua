@@ -31,7 +31,7 @@ minetest.register_globalstep(function(dtime)
                 player:set_wielded_item(itemstack)
 
                 local velocity = player:get_velocity()
-                velocity.y = -2
+                velocity.y = -0.2
                 player:set_velocity(velocity)
             end
 	end
