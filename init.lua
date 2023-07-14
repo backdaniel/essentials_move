@@ -26,10 +26,10 @@ minetest.register_globalstep(function(dtime)
                 itemstack:add_wear(30)
                 player:set_wielded_item(itemstack)
 
-                player:set_physics_override({gravity=0, speed=1.5})
+                player:set_physics_override({gravity=0, speed=2})
 
                 local velocity = player:get_velocity()
-                local goal = -2.2
+                local goal = -2.3
                 local difference = goal - velocity.y
                 local scaled = 2 / (1 + math.exp(-difference)) - 1
                 player:add_velocity({x=0, y=scaled, z=0})
