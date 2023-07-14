@@ -65,26 +65,31 @@ minetest.register_craft({
 minetest.override_item("default:mese_crystal", {
     on_use = function(itemstack, user, pointed_thing)
         local pos = user:get_pos()
+        
         pos.x = math.floor(pos.x + 0.5)
         pos.z = math.floor(pos.z + 0.5)
 
-        local pos1 = {x = pos.x, y = -31000, z = pos.z}
-        local pos2 = {x = pos.x, y = 31000, z = pos.z}
+        local CHUNK_SIZE = 100
 
         local vm = minetest.get_voxel_manip()
-        local emin, emax = vm:read_from_map(pos1, pos2)
 
-        local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
-        local data = vm:get_data()
+        for y = 31000, -31000, -CHUNK_SIZE do
+            local pos1 = {x = pos.x, y = math.max(y - CHUNK_SIZE + 1, -31000), z = pos.z}
+            local pos2 = {x = pos.x, y = y, z = pos.z}
 
-        for y = 31000, -31000, -1 do
-            local vi = area:index(pos.x, y, pos.z)
-            local nodename = minetest.get_name_from_content_id(data[vi])
+            local emin, emax = vm:read_from_map(pos1, pos2)
+            local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
+            local data = vm:get_data()
 
-            if nodename ~= "air" then
-                pos.y = y + 1
-                user:set_pos(pos)
-                break
+            for cy = emax.y, emin.y, -1 do
+                local vi = area:index(pos.x, cy, pos.z)
+                local nodename = minetest.get_name_from_content_id(data[vi])
+
+                if nodename ~= "air" and nodename ~= "ignore" then
+                    pos.y = cy + 1
+                    user:set_pos(pos)
+                    return
+                end
             end
         end
     end
