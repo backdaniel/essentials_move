@@ -32,11 +32,8 @@ minetest.register_globalstep(function(dtime)
 
                 minetest.chat_send_all("x=" .. velocity.x .. ", y=" .. velocity.y .. ", z=" .. velocity.z)
 
-                if velocity.y < -2 then
-                    player:add_velocity({x=0, y=0.1, z=0})
-                else
-                    player:add_velocity({x=0, y=-0.1, z=0})
-                end
+                local difference = -2 - velocity.y
+                player:add_velocity({x=0, y=difference, z=0})
 
                 player:set_physics_override({gravity=0})
             else
