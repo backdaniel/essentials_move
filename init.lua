@@ -68,7 +68,7 @@ minetest.override_item("default:mese_crystal", {
         local pos = user:get_pos()
         local new_pos = {x=pos.x, y=0, z=pos.z}
 
-        for y = 0, 2000, 16 do
+        for y = 0, 200, 16 do
             new_pos.y = y
             minetest.emerge_area({x=new_pos.x-16, y=new_pos.y, z=new_pos.z-16}, {x=new_pos.x+16, y=new_pos.y+16, z=new_pos.z+16})
 
@@ -84,11 +84,17 @@ minetest.override_item("default:mese_crystal", {
                     minetest.after(0.1, function() 
                         minetest.chat_send_player(player_name, "Resurfacing...")
                         user:set_pos(new_pos)
+                        user:punch(user, 1.0, {full_punch_interval=1.0, damage_groups={fleshy=3}})
                     end)
                     return
                 end
             end
         end
+        minetest.after(0.1, function() 
+            minetest.chat_send_player(player_name, "No safe place to resurface was found. Teleporting to y=0...")
+            user:set_pos({x=pos.x, y=0, z=pos.z})
+            user:punch(user, 1.0, {full_punch_interval=1.0, damage_groups={fleshy=3}})
+        end)
     end
 })
 
