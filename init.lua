@@ -12,7 +12,7 @@ local function can_glide(user)
     local node_below = minetest.get_node(pos)
     local velocity = user:get_velocity()
     if node_below.name == 'air' and not user:get_attach() and velocity.y < 0 then
-	return true
+        return true
     else
         return false
     end
@@ -33,11 +33,7 @@ minetest.register_globalstep(function(dtime)
                 player:set_wielded_item(itemstack)
 
                 local velocity = player:get_velocity()
-                if velocity.y < -2 then
-                    velocity.y = -2
-                    player:set_velocity(velocity)
-                end
-                player:set_physics_override({gravity=0}) 
+                player:set_physics_override({gravity = (velocity.y + 2.0)/20}) 
             else
                 player:set_physics_override({gravity=1})
             end
