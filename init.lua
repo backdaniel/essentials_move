@@ -62,41 +62,17 @@ minetest.register_craft({
 
 -- RECALL
 
-minetest.override_item("default:mese_crystal", {
-    on_use = function(itemstack, user, pointed_thing)
-        local player_name = user:get_player_name()
-        local pos = user:get_pos()
-        local new_pos = {x=pos.x, y=0, z=pos.z}
-
-        for y = 0, 200, 16 do
-            new_pos.y = y
-            minetest.emerge_area({x=new_pos.x-16, y=new_pos.y, z=new_pos.z-16}, {x=new_pos.x+16, y=new_pos.y+16, z=new_pos.z+16})
-
-            for i = 0, 15 do
-                local y_check = y + i
-                local pos_check = {x=new_pos.x, y=y_check, z=new_pos.z}
-                local node = minetest.get_node(pos_check)
-                local node_above = minetest.get_node({x=pos_check.x, y=pos_check.y+1, z=pos_check.z})
-                local node_two_above = minetest.get_node({x=pos_check.x, y=pos_check.y+2, z=pos_check.z})
-
-                if node.name ~= "air" and node_above.name == "air" and node_two_above.name == "air" then
-                    new_pos.y = y_check + 1
-                    minetest.after(0.1, function() 
-                        minetest.chat_send_player(player_name, "Resurfacing...")
-                        user:set_pos(new_pos)
-                        user:punch(user, 1.0, {full_punch_interval=1.0, damage_groups={fleshy=3}})
-                    end)
-                    return
-                end
-            end
-        end
-        minetest.after(0.1, function() 
-            minetest.chat_send_player(player_name, "No safe place to resurface was found. Teleporting to y=0...")
-            user:set_pos({x=pos.x, y=0, z=pos.z})
-            user:punch(user, 1.0, {full_punch_interval=1.0, damage_groups={fleshy=3}})
-        end)
+on_use = function(itemstack, user, pointed_thing)
+    local name = user:get_player_name()
+    local spawn
+    if beds.spawn[name] then
+        spawn = beds.spawn[name]
+    else
+        spawn = minetest.setting_get_pos("static_spawnpoint")
     end
-})
+    user:set_pos(spawn)
+    user:set_hp(user:get_hp() - 3)
+end
 
 -- TELEPORT
 
