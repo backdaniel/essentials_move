@@ -32,10 +32,12 @@ minetest.register_globalstep(function(dtime)
 
                 player:set_wielded_item(itemstack)
 
-                player:set_physics_override({gravity=0}) 
                 local velocity = player:get_velocity()
-                velocity.y = -2
-                player:set_velocity(velocity)
+                if velocity.y < -2 then
+                    velocity.y = -2
+                    player:set_velocity(velocity)
+                end
+                player:set_physics_override({gravity=0}) 
             else
                 player:set_physics_override({gravity=1})
             end
@@ -46,18 +48,18 @@ minetest.register_globalstep(function(dtime)
 end)
 
 minetest.register_tool("essentials_move:umbrella", {
-	description = S("Umbrella"),
-	inventory_image = "tool_umbrella.png",
-	stack_max = 1,
+    description = S("Umbrella"),
+    inventory_image = "tool_umbrella.png",
+    stack_max = 1,
 })
 
 minetest.register_craft({
-	output = "essentials_move:umbrella",
-	recipe = {
-		{"default:paper", "default:paper", "default:paper"},
-		{"", "default:stick", ""},
-		{"", "default:stick", ""},
-	}
+    output = "essentials_move:umbrella",
+    recipe = {
+        {"default:paper", "default:paper", "default:paper"},
+        {"", "default:stick", ""},
+        {"", "default:stick", ""},
+    }
 })
 
 -- RECALL
