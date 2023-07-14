@@ -64,30 +64,27 @@ minetest.register_craft({
 
 minetest.override_item("default:mese_crystal", {
     on_use = function(itemstack, user, pointed_thing)
+        local player_name = user:get_player_name()
         local pos = user:get_pos()
-        
-        pos.x = math.floor(pos.x + 0.5)
-        pos.z = math.floor(pos.z + 0.5)
+        local new_pos = {x=pos.x, y=0, z=pos.z}
 
-        local CHUNK_SIZE = 100
+        for y = 0, 2000, 16 do
+            new_pos.y = y
+            minetest.emerge_area({x=new_pos.x-16, y=new_pos.y, z=new_pos.z-16}, {x=new_pos.x+16, y=new_pos.y+16, z=new_pos.z+16})
 
-        local vm = minetest.get_voxel_manip()
+            for i = 0, 15 do
+                local y_check = y + i
+                local pos_check = {x=new_pos.x, y=y_check, z=new_pos.z}
+                local node = minetest.get_node(pos_check)
+                local node_above = minetest.get_node({x=pos_check.x, y=pos_check.y+1, z=pos_check.z})
+                local node_two_above = minetest.get_node({x=pos_check.x, y=pos_check.y+2, z=pos_check.z})
 
-        for y = 31000, -31000, -CHUNK_SIZE do
-            local pos1 = {x = pos.x, y = math.max(y - CHUNK_SIZE + 1, -31000), z = pos.z}
-            local pos2 = {x = pos.x, y = y, z = pos.z}
-
-            local emin, emax = vm:read_from_map(pos1, pos2)
-            local area = VoxelArea:new{MinEdge=emin, MaxEdge=emax}
-            local data = vm:get_data()
-
-            for cy = emax.y, emin.y, -1 do
-                local vi = area:index(pos.x, cy, pos.z)
-                local nodename = minetest.get_name_from_content_id(data[vi])
-
-                if nodename ~= "air" and nodename ~= "ignore" then
-                    pos.y = cy + 1
-                    user:set_pos(pos)
+                if node.name ~= "air" and node_above.name == "air" and node_two_above.name == "air" then
+                    new_pos.y = y_check + 1
+                    minetest.after(0.1, function() 
+                        minetest.chat_send_player(player_name, "Resurfacing...")
+                        user:set_pos(new_pos)
+                    end)
                     return
                 end
             end
