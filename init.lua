@@ -29,7 +29,7 @@ minetest.register_globalstep(function(dtime)
                 player:set_wielded_item(itemstack)
 
                 local velocity = player:get_velocity()
-                player:set_physics_override({gravity=-velocity.y})
+                player:set_physics_override({gravity=velocity.y/20})
                 minetest.chat_send_all("x=" .. velocity.x .. ", y=" .. velocity.y .. ", z=" .. velocity.z)
             else
                 player:set_physics_override({gravity=1})
