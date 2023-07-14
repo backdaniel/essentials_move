@@ -36,6 +36,7 @@ minetest.register_globalstep(function(dtime)
                     player:add_velocity({x=0, y=0.1, z=0})
                 else
                     player:add_velocity({x=0, y=-0.1, z=0})
+                end
 
                 player:set_physics_override({gravity=0})
             else
