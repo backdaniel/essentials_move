@@ -26,16 +26,13 @@ minetest.register_globalstep(function(dtime)
 
                 itemstack:add_wear(100)
 
-                local wear = itemstack:get_wear()
-                local playername = player:get_player_name()
-                minetest.chat_send_all("Player " .. playername .. " used the umbrella. Current wear: " .. wear)
-
                 player:set_wielded_item(itemstack)
 
                 local velocity = player:get_velocity()
                 player:set_physics_override({gravity=0.01})
                 velocity.y = 0
                 player:set_velocity(velocity)
+                minetest.chat_send_all("x=" .. velocity.x .. ", y=" .. velocity.y .. ", z=" .. velocity.z)
             else
                 player:set_physics_override({gravity=1})
             end
