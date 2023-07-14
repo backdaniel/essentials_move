@@ -80,7 +80,7 @@ minetest.override_item("default:mese_crystal", {
 
         if spawn then
             user:set_pos(spawn)
-            user:set_hp(user:get_hp() - 3)
+            user:set_hp(user:get_hp() - 6)
             minetest.chat_send_all(name .. " used Mese Crystal to recall.")
             if not is_creative(name) then
                 itemstack:take_item()
