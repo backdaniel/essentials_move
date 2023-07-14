@@ -7,7 +7,21 @@ local S = minetest.get_translator("essentials_move")
 -- UMBRELLA
 
 local function can_glide(user)
-	return true
+    local pos = user:get_pos()
+    pos.y = pos.y - 1
+    local node = minetest.get_node(pos)
+
+    if node.name == "air" then
+        return false
+    end
+    local nodedef = minetest.registered_nodes[node.name]
+    if nodedef and nodedef.liquidtype ~= "none" then
+        return false
+    end
+    if user:get_attach() then
+        return false
+    end
+    return true
 end
 
 minetest.register_globalstep(function(dtime)
@@ -16,7 +30,7 @@ minetest.register_globalstep(function(dtime)
             if can_glide(player) then
                 local itemstack = player:get_wielded_item()
 
-                itemstack:add_wear(200)
+                itemstack:add_wear(100)
 
 		local wear = itemstack:get_wear()
                 local playername = player:get_player_name()
