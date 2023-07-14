@@ -1,7 +1,9 @@
-# essentials_move
+# Movement Essentials
+Description.
 
-## TODO
-- umbrella
-- mese recall
-- mese teleport
-- cobweb
+Created for [minetest_game](https://content.minetest.net/packages/Minetest/minetest_game/), with gameplay balance in mind.
+
+## Features
+- Umbrella tool (hold for slow fall).
+- Mese recall (consume crystal to resurface).
+- Mese teleport (throw crystal shard to teleport).
