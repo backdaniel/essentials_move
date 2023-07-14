@@ -10,8 +10,9 @@ local function can_glide(user)
     local pos = user:get_pos()
     pos.y = pos.y - 0.1
     local node_below = minetest.get_node(pos)
-    if node_below.name == 'air' and not user:get_attach() then
-        return true
+    local velocity = user:get_velocity()
+    if node_below.name == 'air' and not user:get_attach() and velocity.y < 0 then
+	return true
     else
         return false
     end
@@ -22,22 +23,18 @@ minetest.register_globalstep(function(dtime)
         if player:get_wielded_item():get_name() == "essentials_move:umbrella" then
             if can_glide(player) then
                 local itemstack = player:get_wielded_item()
-		
+
                 itemstack:add_wear(100)
-		
-                local wear = itemstack:get_wear()
-                local playername = player:get_player_name()
-                minetest.chat_send_all("Player " .. playername .. " used the umbrella. Current wear: " .. wear)
-		
+
+                minetest.chat_send_all("Player " .. player:get_player_name() .. " used the umbrella. Current wear: " .. itemstack:get_wear())
+
                 player:set_wielded_item(itemstack)
-		
-                player:set_physics_override({gravity=0.5})
-            else
-                player:set_physics_override({gravity=1})
+
+                local velocity = player:get_velocity()
+                velocity.y = -2
+                player:set_velocity(velocity)
             end
-        else
-            player:set_physics_override({gravity=1})
-        end
+	end
     end
 end)
 
