@@ -35,8 +35,13 @@ minetest.register_globalstep(function(dtime)
 
                 player:set_physics_override({gravity=0})
 
-                local difference = -2 - velocity.y
-                player:add_velocity({x=0, y=difference, z=0})
+                local goal = -2
+                local difference = goal - velocity.y
+                
+                -- Sigmoid scaling
+                local scaled = 2 / (1 + math.exp(-difference)) - 1
+                
+                player:add_velocity({x=0, y=scaled, z=0})
             else
                 player:set_physics_override({gravity=1})
             end
