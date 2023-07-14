@@ -5,5 +5,5 @@ Created for [minetest_game](https://content.minetest.net/packages/Minetest/minet
 
 ## Features
 - Umbrella tool (hold for slow fall).
-- Mese recall (consume crystal to resurface).
+- Mese recall (consume crystal to recall).
 - Mese teleport (throw crystal shard to teleport).
