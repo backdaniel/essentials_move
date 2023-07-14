@@ -66,17 +66,22 @@ minetest.override_item("default:mese_crystal", {
     on_use = function(itemstack, user, pointed_thing)
         local name = user:get_player_name()
         local spawn
-        if beds.spawn[name] then
+
+        if beds and beds.spawn and beds.spawn[name] then
             spawn = beds.spawn[name]
         else
             spawn = minetest.setting_get_pos("static_spawnpoint")
         end
-        user:set_pos(spawn)
-        user:set_hp(user:get_hp() - 3)
-        minetest.chat_send_all(name .. " used Mese Crystal to recall.")
+
+        if spawn then
+            user:set_pos(spawn)
+            user:set_hp(user:get_hp() - 3)
+            minetest.chat_send_all(name .. " used Mese Crystal to recall.")
+        else
+            minetest.chat_send_player(name, "No available spawn point!")
+        end
     end
 })
-
 -- TELEPORT
 
 
