@@ -72,6 +72,7 @@ on_use = function(itemstack, user, pointed_thing)
     end
     user:set_pos(spawn)
     user:set_hp(user:get_hp() - 3)
+    minetest.chat_send_all(name .. " used Mese Crystal to recall.")
 end
 
 -- TELEPORT
