@@ -1,2 +1,2 @@
-# textdomain: essentials_move
+# textdomain: movement_essentials
 Umbrella=
