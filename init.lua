@@ -1,8 +1,8 @@
-essentials_move = {}
+movement_essentials = {}
 
-local modpath = minetest.get_modpath("essentials_move")
+local modpath = minetest.get_modpath("movement_essentials")
 
-local S = minetest.get_translator("essentials_move")
+local S = minetest.get_translator("movement_essentials")
 
 -- UMBRELLA
 
@@ -24,7 +24,7 @@ end
 
 minetest.register_globalstep(function(dtime)
     for _, player in ipairs(minetest.get_connected_players()) do
-        if player:get_wielded_item():get_name() == "essentials_move:umbrella" then
+        if player:get_wielded_item():get_name() == "movement_essentials:umbrella" then
             if can_glide(player) then
                 local itemstack = player:get_wielded_item()
                 itemstack:add_wear(UMBRELLA_WEAR_VALUE)
@@ -45,14 +45,14 @@ minetest.register_globalstep(function(dtime)
     end
 end)
 
-minetest.register_tool("essentials_move:umbrella", {
+minetest.register_tool("movement_essentials:umbrella", {
     description = S("Umbrella"),
     inventory_image = "tool_umbrella.png",
     stack_max = 1,
 })
 
 minetest.register_craft({
-    output = "essentials_move:umbrella",
+    output = "movement_essentials:umbrella",
     recipe = {
         {"default:paper", "default:paper", "default:paper"},
         {"", "default:stick", ""},
