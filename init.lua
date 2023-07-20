@@ -34,7 +34,9 @@ minetest.register_globalstep(function(dtime)
         if player:get_wielded_item():get_name() == "movement_essentials:umbrella" then
             if can_glide(player) then
                 local itemstack = player:get_wielded_item()
-                itemstack:add_wear(UMBRELLA_WEAR_VALUE)
+                if not is_creative(player:get_player_name()) then
+                    itemstack:add_wear(UMBRELLA_WEAR_VALUE)
+                end
                 player:set_wielded_item(itemstack)
 
                 player:set_physics_override({gravity=0, speed=UMBRELLA_MOVE_SPEED})
@@ -114,7 +116,6 @@ minetest.register_entity("movement_essentials:shard", {
     on_step = function(self, dtime, moveresult)
         if moveresult.collides then
             local pos = self.object:get_pos()
-
             for _, player in ipairs(minetest.get_connected_players()) do
                 if player:get_player_name() == self.thrower then
                     player:set_pos(pos)
