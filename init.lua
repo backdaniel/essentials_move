@@ -8,7 +8,7 @@ local S = minetest.get_translator("movement_essentials")
 
 local UMBRELLA_MOVE_SPEED = 2
 local UMBRELLA_FALL_SPEED = -2.3
-local UMBRELLA_WEAR_VALUE = 30
+local UMBRELLA_WEAR_VALUE = 20
 
 local function can_glide(user)
     local pos = user:get_pos()
