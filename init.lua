@@ -4,6 +4,13 @@ local modpath = minetest.get_modpath("movement_essentials")
 
 local S = minetest.get_translator("movement_essentials")
 
+-- HELPERS
+
+local function is_creative(player_name)
+  local player_privs = minetest.get_player_privs(player_name)
+  return player_privs.creative or minetest.is_creative_enabled(player_name)
+end
+
 -- UMBRELLA
 
 local UMBRELLA_MOVE_SPEED = 2
@@ -64,11 +71,6 @@ minetest.register_craft({
 
 local MIN_DISTANCE = 10
 
-local function is_creative(player_name)
-  local player_privs = minetest.get_player_privs(player_name)
-  return player_privs.creative or minetest.is_creative_enabled(player_name)
-end
-
 minetest.override_item("default:mese_crystal", {
     on_use = function(itemstack, user, pointed_thing)
         local name = user:get_player_name()
@@ -109,7 +111,6 @@ minetest.register_entity("movement_essentials:shard", {
     visual = "sprite",
     visual_size = {x=0.5, y=0.5},
     textures = {texture},
-
     on_step = function(self, dtime, moveresult)
         if moveresult.collides then
             local pos = self.object:get_pos()
@@ -127,6 +128,7 @@ minetest.register_entity("movement_essentials:shard", {
 
 minetest.override_item("default:mese_crystal_fragment", {
     on_use = function(itemstack, user, pointed_thing)
+        local name = user:get_player_name()
         local playerpos = user:get_pos()
         local obj = minetest.add_entity({
             x = playerpos.x,
@@ -136,8 +138,10 @@ minetest.override_item("default:mese_crystal_fragment", {
         local dir = user:get_look_dir()
         obj:set_velocity({x = dir.x * 19, y = dir.y * 19, z = dir.z * 19})
         obj:set_acceleration({x = dir.x * -3, y = -10, z = dir.z * -3})
-        obj:get_luaentity().thrower = user:get_player_name()
-        itemstack:take_item()
+        obj:get_luaentity().thrower = name
+        if not is_creative(name) then
+            itemstack:take_item()
+        end
         return itemstack
     end
 })
