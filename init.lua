@@ -102,4 +102,42 @@ minetest.override_item("default:mese_crystal", {
 
 -- TELEPORT
 
+local texture = minetest.registered_items["default:mese_crystal_fragment"].inventory_image
 
+minetest.register_entity("movement_essentials:shard", {
+    physical = true,
+    visual = "sprite",
+    visual_size = {x=0.5, y=0.5},
+    textures = {texture},
+
+    on_step = function(self, dtime, moveresult)
+        if moveresult.collides then
+            local pos = self.object:get_pos()
+
+            for _, player in ipairs(minetest.get_connected_players()) do
+                if player:get_player_name() == self.thrower then
+                    player:set_pos(pos)
+                    self.object:remove()
+                    return
+                end
+            end
+        end
+    end,
+})
+
+minetest.override_item("default:mese_crystal_fragment", {
+    on_use = function(itemstack, user, pointed_thing)
+        local playerpos = user:get_pos()
+        local obj = minetest.add_entity({
+            x = playerpos.x,
+            y = playerpos.y + 1.5,
+            z = playerpos.z,
+        }, "movement_essentials:shard")
+        local dir = user:get_look_dir()
+        obj:set_velocity({x = dir.x * 19, y = dir.y * 19, z = dir.z * 19})
+        obj:set_acceleration({x = dir.x * -3, y = -10, z = dir.z * -3})
+        obj:get_luaentity().thrower = user:get_player_name()
+        itemstack:take_item()
+        return itemstack
+    end
+})
