@@ -69,7 +69,7 @@ minetest.register_craft({
 
 -- RECALL
 
-local MIN_DISTANCE = 10
+local MIN_DISTANCE = 20
 
 minetest.override_item("default:mese_crystal", {
     on_use = function(itemstack, user, pointed_thing)
