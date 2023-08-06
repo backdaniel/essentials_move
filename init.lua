@@ -7,8 +7,8 @@ local S = minetest.get_translator("movement_essentials")
 -- HELPERS
 
 local function is_creative(player_name)
-  local player_privs = minetest.get_player_privs(player_name)
-  return player_privs.creative or minetest.is_creative_enabled(player_name)
+	local player_privs = minetest.get_player_privs(player_name)
+	return player_privs.creative or minetest.is_creative_enabled(player_name)
 end
 
 -- UMBRELLA
@@ -18,56 +18,55 @@ local UMBRELLA_FALL_SPEED = -2.3
 local UMBRELLA_WEAR_VALUE = 20
 
 local function can_glide(user)
-    local pos = user:get_pos()
-    pos.y = pos.y - 0.1
-    local node_below = minetest.get_node(pos)
-    local velocity = user:get_velocity()
-    if node_below.name == 'air' and not user:get_attach() and velocity.y < 0 then
-        return true
-    else
-        return false
-    end
+	local pos = user:get_pos()
+	pos.y = pos.y - 0.1
+	local node_below = minetest.get_node(pos)
+	local velocity = user:get_velocity()
+	if node_below.name == 'air' and not user:get_attach() and velocity.y < 0 then
+		return true
+	else
+		return false
+	end
 end
 
+local gliding = false
 minetest.register_globalstep(function(dtime)
-    for _, player in ipairs(minetest.get_connected_players()) do
-        if player:get_wielded_item():get_name() == "movement_essentials:umbrella" then
-            if can_glide(player) then
-                local itemstack = player:get_wielded_item()
-                if not is_creative(player:get_player_name()) then
-                    itemstack:add_wear(UMBRELLA_WEAR_VALUE)
-                end
-                player:set_wielded_item(itemstack)
-
-                player:set_physics_override({gravity=0, speed=UMBRELLA_MOVE_SPEED})
-
-                local velocity = player:get_velocity()
-                local difference = UMBRELLA_FALL_SPEED - velocity.y
-                local scaled = 2 / (1 + math.exp(-difference)) - 1
-                player:add_velocity({x=0, y=scaled, z=0})
-            else
-                player:set_physics_override({gravity=1, speed=1})
-            end
-        else
-            player:set_physics_override({gravity=1, speed=1})
-        end
-    end
+	for _, player in ipairs(minetest.get_connected_players()) do
+		local def = player:get_physics_override()
+		local itemstack = player:get_wielded_item()
+		if itemstack:get_name() == "movement_essentials:umbrella" and can_glide(player) then
+			gliding = true
+			if not is_creative(player:get_player_name()) then
+				itemstack:add_wear(UMBRELLA_WEAR_VALUE)
+				player:set_wielded_item(itemstack)
+			end
+			player:set_physics_override({gravity=0, speed=UMBRELLA_MOVE_SPEED})
+			local velocity = player:get_velocity()
+			local difference = UMBRELLA_FALL_SPEED - velocity.y
+			local scaled = 2 / (1 + math.exp(-difference)) - 1
+			player:add_velocity({x=0, y=scaled, z=0})
+		elseif gliding then
+				player:set_physics_override({gravity=1, speed=1})
+				gliding = false
+		end
+	end
 end)
 
 minetest.register_tool("movement_essentials:umbrella", {
-    description = S("Umbrella"),
-    inventory_image = "tool_umbrella.png",
-    stack_max = 1,
+	description = S("Umbrella"),
+	inventory_image = "tool_umbrella.png",
+	stack_max = 1,
 })
 
 minetest.register_craft({
-    output = "movement_essentials:umbrella",
-    recipe = {
-        {"default:paper", "default:paper", "default:paper"},
-        {"", "default:stick", ""},
-        {"", "default:stick", ""},
-    }
+	output = "movement_essentials:umbrella",
+	recipe = {
+		{"default:paper", "default:paper", "default:paper"},
+		{"", "default:stick", ""},
+		{"", "default:stick", ""},
+	}
 })
+
 
 -- RECALL
 
