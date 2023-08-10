@@ -86,6 +86,7 @@ minetest.override_item("default:mese_crystal", {
 
 		if spawn then
 			if vector.distance(current_pos, spawn) >= MIN_DISTANCE then
+				user:add_velocity(vector.multiply(user:get_velocity(), -1))
 				user:set_pos(spawn)
 				minetest.chat_send_all(name .. " used Mese Crystal to recall.")
 				if not is_creative(name) then
@@ -118,6 +119,7 @@ minetest.register_entity("movement_essentials:shard", {
 			local pos = self.object:get_pos()
 			for _, player in ipairs(minetest.get_connected_players()) do
 				if player:get_player_name() == self.thrower then
+					player:add_velocity(vector.multiply(player:get_velocity(), -1))
 					player:set_pos(pos)
 					self.object:remove()
 					return
